@@ -8,6 +8,11 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - List at least two concrete bugs you noticed at the start  
   (for example: "the secret number kept changing" or "the hints were backwards").
 
+  1. The higher/lower hints were swapped. Guessing too high still said "Go HIGHER!" and guessing too low said "Go LOWER!", sending the player in the wrong direction.
+  2. The number ranges were inconsistent. `get_range_for_difficulty` sets different ranges per difficulty (e.g., Easy: 1–20, Hard: 1–50), but the UI always displays "Guess a number between 1 and 100." The ranges themselves also don't make sense since Hard (1–50) is a smaller range than Normal (1–100), making it easier instead of harder.
+  3. The game accepted out-of-bound guesses without any validation or warning.
+  4. Normal difficulty allowed the most attempts (8), while Easy only allowed 6, which is counterintuitive.
+
 ---
 
 ## 2. How did you use AI as a teammate?
