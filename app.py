@@ -1,13 +1,27 @@
 import random
+
+import pandas as pd
 import streamlit as st
-from logic_utils import check_guess, get_range_for_difficulty, parse_guess
 
-
+from logic_utils import check_guess, get_hotcold_label, get_range_for_difficulty, parse_guess
 
 
 
 # FIX: Score only updates on a win, wrong guesses no longer change the score using Claude Code
-def update_score(current_score: int, outcome: str, attempt_number: int):
+def update_score(current_score: int, outcome: str, attempt_number: int) -> int:
+    """Calculate the updated score after a guess.
+
+    Awards points only on a win, scaled by how few attempts were used.
+    Wrong guesses do not change the score.
+
+    Args:
+        current_score: The player's score before this guess.
+        outcome: The result from check_guess ("Win", "Too High", or "Too Low").
+        attempt_number: The current attempt count (1-based).
+
+    Returns:
+        The updated score.
+    """
     if outcome == "Win":
         points = 100 - 10 * attempt_number
         if points < 10:
@@ -42,6 +56,12 @@ low, high = get_range_for_difficulty(difficulty)
 st.sidebar.caption(f"Range: {low} to {high}")
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
+# FEATURE: Guess History sidebar visualization added using Claude Code Agent mode.
+# Claude Code planned the layout, chose pandas + st.bar_chart for the visualization,
+# and generated the code to display guess distance from the secret number.
+st.sidebar.divider()
+st.sidebar.header("Guess History")
+
 if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
@@ -57,6 +77,9 @@ if "status" not in st.session_state:
 
 if "history" not in st.session_state:
     st.session_state.history = []
+
+if "results" not in st.session_state:
+    st.session_state.results = []
 
 st.subheader("Make a guess")
 
@@ -85,6 +108,7 @@ if new_game:
     st.session_state.score = 0
     st.session_state.status = "playing"
     st.session_state.history = []
+    st.session_state.results = []
     st.session_state.secret = random.randint(low, high)
     st.success("New game started.")
     st.rerun()
@@ -110,8 +134,23 @@ if submit:
         # FIX: Removed str() cast that converted secret to string on even attempts using Claude Code
         outcome, message = check_guess(guess_int, st.session_state.secret)
 
+        # FEATURE: Hot/Cold emoji + color-coded hints added using Claude Code for Challenge 4
+        range_size = high - low
+        hotcold = get_hotcold_label(guess_int, st.session_state.secret, range_size)
+
+        st.session_state.results.append({
+            "guess": guess_int,
+            "outcome": outcome,
+            "hotcold": hotcold,
+        })
+
         if show_hint:
-            st.warning(message)
+            if outcome == "Win":
+                st.success(f"{message}  {hotcold}")
+            elif outcome == "Too High":
+                st.error(f"{message}  {hotcold}")
+            else:
+                st.info(f"{message}  {hotcold}")
 
         st.session_state.score = update_score(
             current_score=st.session_state.score,
@@ -135,6 +174,20 @@ if submit:
                     f"Score: {st.session_state.score}"
                 )
 
+# FEATURE: Session summary table added using Claude Code for Challenge 4 Enhanced Game UI
+if st.session_state.results:
+    st.subheader("Session Summary")
+    summary_df = pd.DataFrame([
+        {
+            "#": i + 1,
+            "Guess": r["guess"],
+            "Result": r["outcome"],
+            "Proximity": r["hotcold"],
+        }
+        for i, r in enumerate(st.session_state.results)
+    ])
+    st.dataframe(summary_df, use_container_width=True, hide_index=True)
+
 # FIX: Moved debug info below form processing so history shows all guesses including the current one using Claude Code
 with st.expander("Developer Debug Info"):
     st.write("Secret:", st.session_state.secret)
@@ -142,6 +195,20 @@ with st.expander("Developer Debug Info"):
     st.write("Score:", st.session_state.score)
     st.write("Difficulty:", difficulty)
     st.write("History:", st.session_state.history)
+
+# Render the guess history sidebar chart after processing so it includes the latest guess
+valid_guesses = [g for g in st.session_state.history if isinstance(g, int)]
+if valid_guesses:
+    secret = st.session_state.secret
+    df = pd.DataFrame({
+        "Attempt": [f"#{i+1}" for i in range(len(valid_guesses))],
+        "Guess": valid_guesses,
+        "Distance": [g - secret for g in valid_guesses],
+    })
+    st.sidebar.bar_chart(df, x="Attempt", y="Distance", horizontal=True)
+    st.sidebar.caption("Distance from secret (0 = correct)")
+else:
+    st.sidebar.caption("No guesses yet. Start guessing!")
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")

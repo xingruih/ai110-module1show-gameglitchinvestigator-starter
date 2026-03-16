@@ -63,4 +63,28 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 🚀 Stretch Features
 
-- [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
+### Challenge 2: Guess History Sidebar (via Agent Mode)
+
+Added a **Guess History** sidebar that visualizes how close each guess was to the secret number using a horizontal bar chart. Each bar shows the distance from the secret (positive = too high, negative = too low, zero = correct). This gives the player a visual overview of their guessing strategy at a glance.
+
+**How AI contributed:** Claude Code (Agent mode) planned the feature layout, chose pandas + `st.bar_chart` for the visualization, and generated the implementation. The chart renders after form processing so it always includes the latest guess. The feature comment in `app.py` documents the collaboration.
+
+### Challenge 3: Professional Documentation and Linting
+
+Added Google-style docstrings with type hints to all functions in `logic_utils.py`. Added a module-level docstring. Fixed PEP 8 import grouping in `app.py` and replaced a bare `except Exception` with specific exception types. Added a docstring and return type to `update_score` in `app.py`.
+
+**How AI contributed:** Claude Code generated the docstrings (Args, Returns, Examples sections) and reviewed the code for PEP 8 compliance, then applied the formatting fixes.
+
+### Challenge 4: Enhanced Game UI
+
+Added three UI enhancements without breaking core game logic:
+
+1. **Hot/Cold emoji indicators**: Each guess shows a proximity label (🔥 Boiling, ♨️ Hot, 🌡️ Warm, ❄️ Cold, 🧊 Freezing) based on distance from the secret, scaled to the difficulty range.
+2. **Color-coded hint messages**: "Too High" shows as red (`st.error`), "Too Low" as blue (`st.info`), and "Win" as green (`st.success`) instead of plain yellow warnings.
+3. **Session summary table**: A full table of all guesses showing the attempt number, guess value, result, and proximity indicator.
+
+**How AI contributed:** Claude Code added a `get_hotcold_label` function to `logic_utils.py` with full docstring and type hints, then wired it into the UI alongside the color-coded hints and summary table.
+
+- [x] Enhanced Game UI with Hot/Cold indicators and session summary table:
+
+![Enhanced Game UI](new_ui.png)
