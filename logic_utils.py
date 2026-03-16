@@ -1,6 +1,13 @@
+# FIX: Refactored from app.py and corrected ranges so harder difficulties have wider ranges using Claude Code
 def get_range_for_difficulty(difficulty: str):
     """Return (low, high) inclusive range for a given difficulty."""
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    if difficulty == "Easy":
+        return 1, 50
+    if difficulty == "Normal":
+        return 1, 100
+    if difficulty == "Hard":
+        return 1, 200
+    return 1, 100
 
 
 def parse_guess(raw: str):

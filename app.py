@@ -1,15 +1,7 @@
 import random
 import streamlit as st
-from logic_utils import check_guess
+from logic_utils import check_guess, get_range_for_difficulty
 
-def get_range_for_difficulty(difficulty: str):
-    if difficulty == "Easy":
-        return 1, 20
-    if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
-        return 1, 50
-    return 1, 100
 
 
 def parse_guess(raw: str):
@@ -61,9 +53,10 @@ difficulty = st.sidebar.selectbox(
     index=1,
 )
 
+# FIX: Corrected attempt limits so easier difficulties get more attempts using Claude Code
 attempt_limit_map = {
-    "Easy": 6,
-    "Normal": 8,
+    "Easy": 10,
+    "Normal": 7,
     "Hard": 5,
 }
 attempt_limit = attempt_limit_map[difficulty]
@@ -91,7 +84,7 @@ if "history" not in st.session_state:
 st.subheader("Make a guess")
 
 st.info(
-    f"Guess a number between 1 and 100. "
+    f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 

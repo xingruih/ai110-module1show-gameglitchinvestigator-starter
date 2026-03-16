@@ -34,7 +34,7 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
   and what it showed you about your code.
 - Did AI help you design or understand any tests? How?
 
-  I decided a bug was fixed by writing targeted pytest cases and running them against the updated code. For the swapped hints bug, Claude Code generated two tests: `test_too_high_hint_says_lower` checks that guessing 75 when the secret is 50 returns "Too High" with "LOWER" in the message, and `test_too_low_hint_says_higher` checks that guessing 25 when the secret is 50 returns "Too Low" with "HIGHER" in the message. Both passed after the fix, confirming the hints now point the player in the correct direction. Claude Code helped design these tests. I asked it to generate pytest cases specifically targeting the bug it had just fixed, and it wrote tests that would have failed against the original buggy code.
+  I decided a bug was fixed by writing targeted pytest cases and running them against the updated code. For the swapped hints bug, Claude Code generated two tests: `test_too_high_hint_says_lower` and `test_too_low_hint_says_higher`, which verify the hint message contains the correct direction. For the difficulty ranges bug, Claude Code generated `test_difficulty_ranges_scale_with_difficulty`, which asserts that Easy < Normal < Hard upper bounds, and `test_easy_range_is_not_trivial`, which checks that Easy's range is at least 1-50. All four tests passed after the fixes, confirming the logic works as expected. Claude Code helped design these tests. I asked it to generate pytest cases targeting each bug, and it wrote tests that would have failed against the original buggy code.
 
 ---
 
