@@ -21,14 +21,20 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
 
+  I used Claude Code as my AI teammate throughout this project. One correct suggestion it made was identifying that the higher/lower hints in `check_guess` were swapped. When the guess was too high, the game said "Go HIGHER!" instead of "Go LOWER!", and vice versa. I verified this by reading the original code and confirming the logic was backwards, and then by running pytest cases that assert the hint message contains "LOWER" when the guess is above the secret and "HIGHER" when below.
+
+  One suggestion that was initially incomplete was when Claude Code helped polish my reflection notes for bug #2. It summarized the issue as just the difficulty ranges being illogical (Hard having a smaller range than Easy), but missed the other half of the bug: the UI always hardcodes "Guess a number between 1 and 100" regardless of the actual range set by `get_range_for_difficulty`. I caught this by re-reading `app.py` and pointed it out, and Claude Code then updated the description to cover both problems.
+
 ---
 
 ## 3. Debugging and testing your fixes
 
 - How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
+- Describe at least one test you ran (manual or using pytest)
   and what it showed you about your code.
 - Did AI help you design or understand any tests? How?
+
+  I decided a bug was fixed by writing targeted pytest cases and running them against the updated code. For the swapped hints bug, Claude Code generated two tests: `test_too_high_hint_says_lower` checks that guessing 75 when the secret is 50 returns "Too High" with "LOWER" in the message, and `test_too_low_hint_says_higher` checks that guessing 25 when the secret is 50 returns "Too Low" with "HIGHER" in the message. Both passed after the fix, confirming the hints now point the player in the correct direction. Claude Code helped design these tests. I asked it to generate pytest cases specifically targeting the bug it had just fixed, and it wrote tests that would have failed against the original buggy code.
 
 ---
 
