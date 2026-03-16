@@ -44,6 +44,8 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
 - What change did you make that finally gave the game a stable secret number?
 
+  Streamlit reruns the entire script from top to bottom every time the user interacts with a widget (clicking a button, typing input, etc.). If you store a value in a regular Python variable, it gets reset on every rerun. That is why the secret number would change on each submit if it were generated outside of `session_state`. The `session_state` object persists across reruns, so wrapping the secret in `if "secret" not in st.session_state` ensures it is only generated once and stays stable for the rest of the game. I would explain it to a friend like this: imagine the entire page refreshes every time you click something, but `session_state` is a sticky note that survives each refresh and remembers what you wrote on it.
+
 ---
 
 ## 5. Looking ahead: your developer habits
@@ -52,3 +54,5 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
   - This could be a testing habit, a prompting strategy, or a way you used Git.
 - What is one thing you would do differently next time you work with AI on a coding task?
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+
+  One habit I want to carry forward is writing a focused pytest case right after fixing a bug, before moving on to the next one. It only takes a minute and gives immediate confidence that the fix actually works. Next time I work with AI on a coding task, I would review its output more carefully before accepting it. In this project I caught Claude Code giving an incomplete description of a bug, which reminded me that AI can miss context even when the code is right in front of it. This project changed how I think about AI-generated code: it can look clean and confident while still being wrong in subtle ways, so I need to always verify the logic myself rather than trusting it at face value.
